@@ -47,7 +47,6 @@ USER_GMAIL=your_gemini_api_key
 
 1. **Initialize script_state.json**
     -In script_state.json, indicate which date you want as the initial one
-    
 2. **Schedule the script**  
    - On Linux: use `cron`  
    - On Windows: use **Task Scheduler**  
@@ -56,8 +55,6 @@ USER_GMAIL=your_gemini_api_key
    ```bash
       0 * * * * /usr/bin/python3 /home/martinm/Desktop/python/Licitaciones/src/cron_licitaciones.py >> /home/martinm/cron_licitaciones.log 2>&1
    ```
-
-
 
 3. **Customize the categories**  
    - Open `prompt.py`  
