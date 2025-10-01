@@ -240,7 +240,7 @@ def save_to_csv(llamados: List[Dict], filename: str = None):
     
     if not filename:
         # Generate filename with timestamp
-        filename = f"licitaciones.csv"
+        filename = f"../build/licitaciones.csv"
     
     try:
         # Ensure the filename has .csv extension

@@ -22,6 +22,3 @@ def printParsedList(parsedList):
         print(f"  ID: {item_id}")
         print(f"  Link: {link}")
         print("-" * 80)
-if __name__ == "__main__":
-    path = "./licitaciones_20250930_182112.csv"
-    parseCSV(path)

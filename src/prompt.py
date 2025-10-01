@@ -8,7 +8,7 @@ def intrested_in_licitacion(licitacion):
     url = f"https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash-lite:generateContent?key={os.getenv('GEMINI_API_KEY')}"
     
     prompt = f"""Sos un analista que puede determinar si cierta licitacion es interesante para mi compania.
-    Mi compania es de software y tenemos un gran equipo, entonces todo tipo de licitacion sobre software nos interesa.
+    Mi compania es de software y tenemos un gran equipo, entonces todo tipo de licitacion sobre software nos interesa. Otro tipo de licitaciones de otros rubros no nos interesa.
     
     LICITACION PARA ANALIZAR:
     {licitacion}
@@ -42,7 +42,7 @@ def intrested_in_licitacion(licitacion):
         return "ERROR"
 
 def result_to_csv(list_intresting): 
-    filename = "licitacionesInteresantes.csv"
+    filename = "../build/licitacionesInteresantes.csv"
     try:
         fieldnames = ['id', 'link']
         
