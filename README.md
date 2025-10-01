@@ -33,8 +33,8 @@ Create a `.env` file in the project root with the following variables:
 
 ```env
 SENDER_EMAIL=your_email@gmail.com
-APP_PASSWORD=your_gmail_app_password
-GEMINI_API_KEY=your_gemini_api_key
+PASSWORD_GMAIL=your_gmail_app_password
+USER_GMAIL=your_gemini_api_key
 ```
 
 - **SENDER_EMAIL** → your Gmail address (the sender)  
@@ -62,17 +62,6 @@ GEMINI_API_KEY=your_gemini_api_key
 
 ---
 
-## 📂 Project Structure
-```
-licitaciones-automation/
-├── cron_licitaciones.py     # Main script
-├── script_state.json        # Tracks last processed day (auto-generated)
-├── .env                     # Environment variables (user-provided)
-└── cron_licitaciones.log    # Log file (auto-generated)
-```
-
----
-
 ## How It Works
 1. **Scheduling** → script runs daily (or hourly if configured)  
 2. **State Tracking** → remembers the last processed day to avoid duplicates  
@@ -80,24 +69,6 @@ licitaciones-automation/
 4. **Email Notifications** → sends a daily summary of tenders matching your categories  
 5. **Logging** → activity is stored in `cron_licitaciones.log`  
 
----
-
-## Monitoring
-
-Check logs:
-```bash
-tail -f cron_licitaciones.log
-```
-
-Check cron service status (Linux):
-```bash
-systemctl status cronie
-```
-
-View cron execution logs:
-```bash
-journalctl -u cronie -f
-```
 
 ---
 
