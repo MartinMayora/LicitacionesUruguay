@@ -7,17 +7,17 @@ You can easily customize the categories by adjusting the **prompt** used in the 
 
 ---
 
-## ✨ Features
-- 🕒 **Automated daily execution** (via cron or task scheduler)  
-- 📧 **Email notifications** with fresh tender opportunities  
-- 🎯 **Category filtering** based on a customizable Gemini prompt  
-- 🔄 **Catch-up mode** if the system was offline  
-- 💾 **State tracking** to avoid duplicates  
-- 📊 **Logging** for monitoring and debugging  
+## Features
+- **Automated daily execution** (via cron or task scheduler)  
+- **Email notifications** with fresh tender opportunities  
+- **Category filtering** based on a customizable Gemini prompt  
+- **Catch-up mode** if the system was offline  
+- **State tracking** to avoid duplicates  
+- **Logging** for monitoring and debugging  
 
 ---
 
-## ⚙️ Setup
+## Setup
 
 ### 1. Requirements
 - Python **3.x**
@@ -43,7 +43,7 @@ GEMINI_API_KEY=your_gemini_api_key
 
 ---
 
-## 🚀 Usage
+## Usage
 
 1. **Schedule the script**  
    - On Linux: use `cron`  
@@ -73,7 +73,7 @@ licitaciones-automation/
 
 ---
 
-## 🔄 How It Works
+## How It Works
 1. **Scheduling** → script runs daily (or hourly if configured)  
 2. **State Tracking** → remembers the last processed day to avoid duplicates  
 3. **Catch-up Logic** → if the system was off, it processes missed days  
@@ -82,7 +82,7 @@ licitaciones-automation/
 
 ---
 
-## 📊 Monitoring
+## Monitoring
 
 Check logs:
 ```bash
@@ -101,7 +101,7 @@ journalctl -u cronie -f
 
 ---
 
-## ▶️ Manual Execution
+## Manual Execution
 You can also run the script manually:
 ```bash
 python cron_licitaciones.py
@@ -109,7 +109,7 @@ python cron_licitaciones.py
 
 ---
 
-## 🛠️ Troubleshooting
+## Troubleshooting
 
 ### Cron job not running
 - Verify cron is active:
@@ -138,14 +138,14 @@ python cron_licitaciones.py
 
 ---
 
-## 🔐 Security Notes
+## Security Notes
 - Do **not** commit `.env` to version control.  
 - Regularly rotate your Gmail App Password and Gemini API key.  
 - Restrict API key permissions whenever possible.  
 
 ---
 
-## 📚 Notes
+## Notes
 - The categories of tenders are **fully customizable** via the Gemini prompt.  
 - The project currently targets **Uruguayan public tenders**, but it can be adapted to other sources.  
 - Best suited for always-on systems (e.g., server, VPS, Raspberry Pi, or cloud VM).  
