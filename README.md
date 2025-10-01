@@ -51,7 +51,7 @@ USER_GMAIL=your_gemini_api_key
 
    Example cron job (runs once per day at 9 AM):
    ```bash
-      0 * * * * /usr/bin/python3 /home/martinm/Desktop/python/Licitaciones/cron_licitaciones.py >> /home/martinm/cron_licitaciones.log 2>&1
+      0 * * * * /usr/bin/python3 /home/martinm/Desktop/python/Licitaciones/src/cron_licitaciones.py >> /home/martinm/cron_licitaciones.log 2>&1
    ```
 
 2. **Customize the categories**  
