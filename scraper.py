@@ -8,45 +8,40 @@ import csv
 import os
 
 def scrape_contrataciones_uruguay(date_string: str) -> List[Dict]:
-    """
-    Scrape procurement calls from contratacionesuruguay.com starting from a specific date.
-    Continues scraping until older dates are found.
-    
-    Args:
-        date_string (str): Date in DD-MM-YYYY format (e.g., "30-09-2025")
-    
-    Returns:
-        List[Dict]: List of dictionaries containing procurement call information
-    """
-    
-    # Validate date format
     try:
         target_date = datetime.strptime(date_string, '%d-%m-%Y')
     except ValueError:
-        raise ValueError("Invalid date format. Please use DD-MM-YYYY format (e.g., '30-09-2025')")
+        raise ValueError("Invalid date format. Please use DD-MM-YYYY format (e.g., '29-09-2025')")
     
-    print(f"Scraping all calls from publication date: {date_string} onwards")
+    print(f"Looking for calls with publication date: {date_string}")
+    print("Will start collecting when first target date is found, stop when older dates are found")
     
     llamados = []
     page = 1
     max_pages = 50
     found_older_dates = False
+    started_collecting = False  
     
     while page <= max_pages and not found_older_dates:
         print(f"Checking page {page}...")
         
-        page_llamados, has_next_page, older_dates_found = scrape_single_page(page, target_date)
-        llamados.extend(page_llamados)
+        page_llamados, has_next_page, older_dates_found, found_target_date = scrape_single_page(page, target_date, started_collecting)
         
-        print(f"Found {len(page_llamados)} calls on page {page}")
+        if found_target_date and not started_collecting:
+            started_collecting = True
+            print(f"First occurrence of {date_string} found on page {page}, starting collection...")
         
-        # Stop if we found older dates
+        if started_collecting:
+            llamados.extend(page_llamados)
+            print(f"Collected {len(page_llamados)} calls from page {page}")
+        else:
+            print(f"Skipping page {page} (haven't reached target date yet)")
+        
         if older_dates_found:
             found_older_dates = True
             print(f"Found dates older than {date_string}, stopping search.")
             break
         
-        # Stop if no more pages
         if not has_next_page:
             print("Reached the last page")
             break
@@ -54,18 +49,14 @@ def scrape_contrataciones_uruguay(date_string: str) -> List[Dict]:
         page += 1
         time.sleep(0.5)
     
-    print(f"Total calls found: {len(llamados)}")
+    if started_collecting:
+        print(f"Finished! Total calls collected: {len(llamados)}")
+    else:
+        print(f"No calls found for date {date_string}")
+    
     return llamados
 
-def scrape_single_page(page: int, target_date: datetime) -> tuple:
-    """
-    Scrape a single page of the procurement calls.
-    
-    Returns:
-        tuple: (list_of_llamados, has_next_page, found_older_dates)
-    """
-    
-    # Construct URL with correct pagination format
+def scrape_single_page(page: int, target_date: datetime, started_collecting: bool) -> tuple:
     if page == 1:
         url = "https://contratacionesuruguay.com/convocatorias-nacionales.html"
     else:
@@ -80,20 +71,18 @@ def scrape_single_page(page: int, target_date: datetime) -> tuple:
         
         soup = BeautifulSoup(response.content, 'html.parser')
         
-        # Check for pagination
         has_next_page = check_pagination(soup, page)
         
-        # Find the main table
         tables = soup.find_all('table')
         
         page_llamados = []
         found_older_dates = False
+        found_target_date = False
         
         for table in tables:
             rows = table.find_all('tr')
             
             for row in rows:
-                # Skip header rows
                 if row.find('th'):
                     continue
                 
@@ -101,7 +90,6 @@ def scrape_single_page(page: int, target_date: datetime) -> tuple:
                 if len(cells) < 9:
                     continue
                 
-                # Get publication date from column 7 (index 7)
                 publication_cell = cells[7].get_text(strip=True)
                 publication_date_match = re.match(r'(\d{2}-\d{2}-\d{4})', publication_cell)
                 
@@ -111,38 +99,35 @@ def scrape_single_page(page: int, target_date: datetime) -> tuple:
                     try:
                         publication_date = datetime.strptime(publication_date_str, '%d-%m-%Y')
                         
-                        # Check if this date is OLDER than our target date
+                        if publication_date == target_date and not found_target_date:
+                            found_target_date = True
+                        
                         if publication_date < target_date:
                             found_older_dates = True
-                            # Don't include this row, it's too old
                             continue
                         
-                        # If date is equal or newer than target, include it
-                        if publication_date >= target_date:
+                        if started_collecting and publication_date >= target_date:
                             llamado_info = extract_llamado_info_from_row(cells, publication_date_str)
                             if llamado_info:
                                 page_llamados.append(llamado_info)
                                 
                     except ValueError:
-                        # If date parsing fails, include the row anyway
-                        llamado_info = extract_llamado_info_from_row(cells, publication_date_str)
-                        if llamado_info:
-                            page_llamados.append(llamado_info)
+                        if started_collecting:
+                            llamado_info = extract_llamado_info_from_row(cells, publication_date_str)
+                            if llamado_info:
+                                page_llamados.append(llamado_info)
         
-        return page_llamados, has_next_page, found_older_dates
+        return page_llamados, has_next_page, found_older_dates, found_target_date
         
     except requests.RequestException as e:
         print(f"Error fetching page {page}: {e}")
-        return [], False, False
+        return [], False, False, False
     except Exception as e:
         print(f"Error parsing page {page}: {e}")
-        return [], False, False
+        return [], False, False, False
 
 def check_pagination(soup, current_page: int) -> bool:
-    """
-    Check if there's a next page available.
-    """
-    # Look for next page links with the correct URL pattern
+
     next_links = soup.find_all('a', href=re.compile(r'convocatorias-nacionales-\d+\.html'))
     
     for link in next_links:
@@ -288,17 +273,17 @@ def save_to_csv(llamados: List[Dict], filename: str = None):
                 row = {field: llamado.get(field, '') for field in fieldnames}
                 writer.writerow(row)
         
-        print(f"✅ Data successfully saved to: {filename}")
-        print(f"📊 Total records saved: {len(llamados)}")
+        print(f"Data successfully saved to: {filename}")
+        print(f"Total records saved: {len(llamados)}")
         
         # Show file location
         file_path = os.path.abspath(filename)
-        print(f"📁 File location: {file_path}")
+        print(f"File location: {file_path}")
         
         return filename
         
     except Exception as e:
-        print(f"❌ Error saving to CSV: {e}")
+        print(f"Error saving to CSV: {e}")
         return None
 
 def print_results(llamados: List[Dict]):
@@ -319,7 +304,7 @@ def print_results(llamados: List[Dict]):
         calls_by_date[date].append(llamado)
     
     for date in sorted(calls_by_date.keys()):
-        print(f"\n📅 Date: {date}")
+        print(f"\nDate: {date}")
         print("-" * 50)
         for i, llamado in enumerate(calls_by_date[date], 1):
             print(f"  {i}. {llamado.get('entidad', 'N/A')} - {llamado.get('objeto', 'N/A')}")
@@ -329,8 +314,8 @@ def print_results(llamados: List[Dict]):
 
 # Example usage
 if __name__ == "__main__":
-    # Use September 30, 2025 as the starting date
-    date_to_scrape = "30-09-2025"
+    # Use September 29, 2025 as the starting date
+    date_to_scrape = "29-09-2025"
     
     print(f"Scraping all procurement calls from publication date: {date_to_scrape} onwards")
     
@@ -343,6 +328,3 @@ if __name__ == "__main__":
         
         # Save to CSV
         csv_filename = save_to_csv(results)
-        
-        # Optional: You can also specify a custom filename
-        # csv_filename = save_to_csv(results, "my_licitaciones.csv")
