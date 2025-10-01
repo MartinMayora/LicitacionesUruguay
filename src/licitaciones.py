@@ -9,7 +9,7 @@ def process_licitaciones(parsedCSV):
     
     for i, parse in enumerate(parsedCSV):
         current_time = time.time()
-                if len(request_times) == 10:
+        if len(request_times) == 10:
             time_since_oldest = current_time - request_times[0]
             if time_since_oldest < 60:
                 wait_time = 60 - time_since_oldest + 0.1

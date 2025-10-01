@@ -93,11 +93,4 @@ def send_email_with_csv(csv_path, receiver_email, fecha=None, use_html=True):
     except Exception as e:
         print(f"Error: {e}")
 
-if __name__ == "__main__":
-    send_email_with_csv(
-        csv_path="licitacionesInteresantes.csv",
-        receiver_email="martinmayora@gmail.com",
-        fecha="2024-01-15",
-        use_html=False
-    )
     

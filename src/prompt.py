@@ -42,7 +42,7 @@ def intrested_in_licitacion(licitacion):
         return "ERROR"
 
 def result_to_csv(list_intresting): 
-    filename = "../build/licitacionesInteresantes.csv"
+    filename = os.path.join(os.path.dirname(os.path.dirname(__file__)), "build", "licitacionesInteresantes.csv")
     try:
         fieldnames = ['id', 'link']
         

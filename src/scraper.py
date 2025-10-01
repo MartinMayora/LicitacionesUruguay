@@ -203,7 +203,6 @@ def extract_llamado_info_from_row(cells, publication_date: str) -> Dict:
         # Apertura date
         info['fecha_apertura'] = cells[8].get_text(strip=True)
         
-        # Try to find a link - check all cells for links
         for cell in cells:
             link_tag = cell.find('a', href=True)
             if link_tag:
@@ -216,7 +215,6 @@ def extract_llamado_info_from_row(cells, publication_date: str) -> Dict:
                     info['link'] = f"https://contratacionesuruguay.com/{href}"
                 break
         
-        # If no link found, construct one from ID
         if not info['link'] and info['id']:
             info['link'] = f"https://contratacionesuruguay.com/llamado-{info['id']}"
         
@@ -239,15 +237,11 @@ def save_to_csv(llamados: List[Dict], filename: str = None):
         return None
     
     if not filename:
-        # Generate filename with timestamp
-        filename = f"../build/licitaciones.csv"
-    
+        filename = os.path.join(os.path.dirname(os.path.dirname(__file__)), "build", "licitaciones.csv")    
     try:
-        # Ensure the filename has .csv extension
         if not filename.endswith('.csv'):
             filename += '.csv'
         
-        # Define the field order for the CSV
         fieldnames = [
             'id', 
             'entidad', 
@@ -264,19 +258,15 @@ def save_to_csv(llamados: List[Dict], filename: str = None):
         with open(filename, 'w', newline='', encoding='utf-8') as csvfile:
             writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
             
-            # Write header
             writer.writeheader()
             
-            # Write data rows
             for llamado in llamados:
-                # Ensure all fields are present, fill missing ones with empty string
                 row = {field: llamado.get(field, '') for field in fieldnames}
                 writer.writerow(row)
         
         print(f"Data successfully saved to: {filename}")
         print(f"Total records saved: {len(llamados)}")
         
-        # Show file location
         file_path = os.path.abspath(filename)
         print(f"File location: {file_path}")
         
@@ -295,7 +285,6 @@ def print_results(llamados: List[Dict]):
     print(f"\nFound {len(llamados)} procurement call(s):")
     print("=" * 100)
     
-    # Group by date for better readability
     calls_by_date = {}
     for llamado in llamados:
         date = llamado.get('fecha_publicacion', 'Unknown').split()[0]
@@ -312,19 +301,3 @@ def print_results(llamados: List[Dict]):
             print(f"     Execution Unit: {llamado.get('unidad_ejecutora', 'N/A')}")
             print(f"     Link: {llamado.get('link', 'N/A')}")
 
-# Example usage
-if __name__ == "__main__":
-    # Use September 29, 2025 as the starting date
-    date_to_scrape = "29-09-2025"
-    
-    print(f"Scraping all procurement calls from publication date: {date_to_scrape} onwards")
-    
-    results = scrape_contrataciones_uruguay(date_to_scrape)
-    
-    if not results:
-        print(f"\nNo calls found from {date_to_scrape} onwards.")
-    else:
-        print_results(results)
-        
-        # Save to CSV
-        csv_filename = save_to_csv(results)

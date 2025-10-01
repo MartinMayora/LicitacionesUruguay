@@ -1,6 +1,11 @@
 from datetime import date, timedelta
 import json
+import sys
+import os
+
+sys.path.append(os.path.dirname(__file__))
 from main_licitaciones import get_licitaciones_send_email
+
 STATE_FILE = "script_state.json"
 
 def load_state():

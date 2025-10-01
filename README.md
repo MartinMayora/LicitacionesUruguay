@@ -55,7 +55,7 @@ USER_GMAIL=your_gemini_api_key
    ```
 
 2. **Customize the categories**  
-   - Open `cron_licitaciones.py`  
+   - Open `prompt.py`  
    - Modify the **Gemini prompt** to focus on the categories you care about (e.g., `"Filter tenders about software, IT services, and consulting"`)  
 
 3. **Receive daily emails** with the filtered tenders.  
