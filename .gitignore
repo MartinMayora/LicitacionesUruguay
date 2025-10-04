@@ -1,3 +1,4 @@
 .env
 build/licitaciones.csv
 build/licitacionesInteresantes.csv
+src/cron_licitaciones.logs

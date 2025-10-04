@@ -55,7 +55,6 @@ def scrape_contrataciones_uruguay(date_string: str) -> List[Dict]:
         print(f"No calls found for date {date_string}")
     
     return llamados
-
 def scrape_single_page(page: int, target_date: datetime, started_collecting: bool) -> tuple:
     if page == 1:
         url = "https://contratacionesuruguay.com/convocatorias-nacionales.html"
@@ -99,19 +98,28 @@ def scrape_single_page(page: int, target_date: datetime, started_collecting: boo
                     try:
                         publication_date = datetime.strptime(publication_date_str, '%d-%m-%Y')
                         
+                        # Check if this is the target date we're looking for
                         if publication_date == target_date and not found_target_date:
                             found_target_date = True
+                            # Once we find the target date, we should start collecting from this point
+                            started_collecting = True
                         
+                        # If we found dates older than target, stop after this page
                         if publication_date < target_date:
                             found_older_dates = True
-                            continue
                         
+                        # Collect if we're in collection mode and date is >= target
                         if started_collecting and publication_date >= target_date:
                             llamado_info = extract_llamado_info_from_row(cells, publication_date_str)
                             if llamado_info:
                                 page_llamados.append(llamado_info)
+                        # If we found older dates and we're collecting, we should stop after this row
+                        elif started_collecting and publication_date < target_date:
+                            found_older_dates = True
+                            break
                                 
                     except ValueError:
+                        # If we can't parse the date but we're in collection mode, collect it anyway
                         if started_collecting:
                             llamado_info = extract_llamado_info_from_row(cells, publication_date_str)
                             if llamado_info:
@@ -125,7 +133,7 @@ def scrape_single_page(page: int, target_date: datetime, started_collecting: boo
     except Exception as e:
         print(f"Error parsing page {page}: {e}")
         return [], False, False, False
-
+        
 def check_pagination(soup, current_page: int) -> bool:
 
     next_links = soup.find_all('a', href=re.compile(r'convocatorias-nacionales-\d+\.html'))

