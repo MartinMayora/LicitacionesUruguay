@@ -12,4 +12,4 @@ def get_licitaciones_send_email(date):
     printParsedList(parsedCSV)
     list_intresting = process_licitaciones(parsedCSV)
     filename = result_to_csv(list_intresting)
-    send_email_with_csv(filename, "martinmayora@gmail.com", date)
+    send_email_with_csv(filename, "mailexample@gmail.com", date)
