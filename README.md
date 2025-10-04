@@ -44,10 +44,13 @@ USER_GMAIL=your_gemini_api_key
 ---
 
 ## Usage
-
-1. **Initialize script_state.json**
-    -In script_state.json, indicate which date you want as the initial one
-2. **Schedule the script**  
+1. **Change recipient email**
+    -In `main_licitaciones.py`, in the function send_mail_with_csv, change the generic email to yours
+   
+2. **Initialize script_state.json**
+    -In `script_state.json`, initialize the date
+   
+3. **Schedule the script**  
    - On Linux: use `cron`  
    - On Windows: use **Task Scheduler**  
 
@@ -56,11 +59,11 @@ USER_GMAIL=your_gemini_api_key
       0 * * * * /usr/bin/python3 /home/martinm/Desktop/python/Licitaciones/src/cron_licitaciones.py >> /home/martinm/cron_licitaciones.log 2>&1
    ```
 
-3. **Customize the categories**  
+4. **Customize the categories**  
    - Open `prompt.py`  
    - Modify the **Gemini prompt** to focus on the categories you care about (e.g., `"Filter tenders about software, IT services, and consulting"`)  
 
-4. **Receive daily emails** with the filtered tenders.  
+5. **Receive daily emails** with the filtered tenders.  
 
 ---
 
