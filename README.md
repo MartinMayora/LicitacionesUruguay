@@ -114,13 +114,6 @@ python cron_licitaciones.py
 
 ---
 
-## Security Notes
-- Do **not** commit `.env` to version control.  
-- Regularly rotate your Gmail App Password and Gemini API key.  
-- Restrict API key permissions whenever possible.  
-
----
-
 ## Notes
 - The categories of tenders are **fully customizable** via the Gemini prompt.  
 - The project currently targets **Uruguayan public tenders**, but it can be adapted to other sources.  
